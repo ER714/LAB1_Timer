@@ -50,7 +50,7 @@ TIM_HandleTypeDef htim2;
 /* USER CODE BEGIN PV */
 static uint64_t timestamp = 0;
 uint32_t counter = -1;
-uint16_t ADC_RawRead[30] = {0};
+uint16_t ADC_RawRead[300] = {0};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -104,7 +104,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim2); //Interrupt
   HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
-  HAL_ADC_Start_DMA(&hadc1, ADC_RawRead, 30);
+  HAL_ADC_Start_DMA(&hadc1, ADC_RawRead, 300);
   /* USER CODE END 2 */
 
   /* Infinite loop */
