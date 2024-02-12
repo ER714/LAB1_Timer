@@ -52,6 +52,8 @@ TIM_HandleTypeDef htim3;
 static uint64_t timestamp = 0;
 uint32_t counter = -1;
 uint16_t ADC_RawRead[300] = {0};
+int sum[3] = {0};
+int Avg[3] = {0};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -64,6 +66,7 @@ static void MX_ADC1_Init(void);
 static void MX_TIM3_Init(void);
 /* USER CODE BEGIN PFP */
 void micros();
+void avg();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -119,6 +122,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  micros();
+	  avg();
   }
   /* USER CODE END 3 */
 }
@@ -461,6 +465,22 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 void micros()
 {
 	timestamp = counter*(4294967295) + __HAL_TIM_GET_COUNTER(&htim2);
+}
+void avg()
+{
+	for (int i = 0; i < 100; i++)
+	{
+		sum[0] += ADC_RawRead[(3*i)];
+		sum[1] += ADC_RawRead[(3*i) + 1];
+		sum[2] += ADC_RawRead[(3*i) + 2];
+	}
+		Avg[0] = sum[0]/100;
+		Avg[1] = sum[1]/100;
+		Avg[2] = sum[2]/100;
+		//return 0
+		sum[0] = 0;
+		sum[1] = 0;
+		sum[2] = 0;
 }
 /* USER CODE END 4 */
 
