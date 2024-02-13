@@ -722,7 +722,7 @@ void pot()
 	else
 	{
 		__HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, ((Avg[1]  * 1100)/4095) + 900);
-		ServoTester = __HAL_TIM_GET_COMPARE(&htim1, TIM_CHANNEL_1);
+		ServoTester = __HAL_TIM_GET_COMPARE(&htim1, TIM_CHANNEL_2);
 		__HAL_TIM_GET_COMPARE(&htim1, ServoTester);
 	}
 }
