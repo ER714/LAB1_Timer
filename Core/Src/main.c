@@ -52,7 +52,7 @@ TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
 
 /* USER CODE BEGIN PV */
-static uint64_t timestamp = 0;
+uint64_t timestamp = 0;
 uint32_t counter = -1;
 uint16_t ADC_RawRead[300] = {0};
 int sum[3] = {0};
@@ -60,6 +60,7 @@ int Avg[3] = {0};
 int state = 0;
 int mode = 1;
 int ServoTester = 0;
+int Servo = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -129,6 +130,8 @@ int main(void)
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
   HAL_TIM_Base_Start(&htim5);
   HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
+  HAL_TIM_IC_Start(&htim1, TIM_CHANNEL_2);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -336,7 +339,6 @@ static void MX_TIM1_Init(void)
 
   /* USER CODE END TIM1_Init 0 */
 
-  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_SlaveConfigTypeDef sSlaveConfig = {0};
   TIM_IC_InitTypeDef sConfigIC = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
@@ -351,15 +353,6 @@ static void MX_TIM1_Init(void)
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-  if (HAL_TIM_ConfigClockSource(&htim1, &sClockSourceConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
   if (HAL_TIM_IC_Init(&htim1) != HAL_OK)
   {
     Error_Handler();
@@ -601,6 +594,10 @@ static void MX_TIM5_Init(void)
   {
     Error_Handler();
   }
+  if (HAL_TIM_PWM_ConfigChannel(&htim5, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN TIM5_Init 2 */
 
   /* USER CODE END TIM5_Init 2 */
@@ -719,11 +716,12 @@ void pot()
 			__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 2500);
 		}
 	}
-	else
+	else if (mode == 2)
 	{
+		//Servo = ((Avg[1]  * 1100)/4095) + 900;
 		__HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, ((Avg[1]  * 1100)/4095) + 900);
 		ServoTester = __HAL_TIM_GET_COMPARE(&htim1, TIM_CHANNEL_2);
-		__HAL_TIM_GET_COMPARE(&htim1, ServoTester);
+		__HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2,ServoTester);
 	}
 }
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
